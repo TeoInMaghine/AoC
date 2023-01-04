@@ -13,12 +13,14 @@ class Monkey():
         self.testDivisible = testDivisible
         self.trueMonkey = trueMonkey
         self.falseMonkey = falseMonkey
+        self.inspectedItems = 0
     
     def ExecuteRoundActions(self):
         for index, item in enumerate(self.items):
+            self.inspectedItems += 1;
             old = item
-            start = time.time()
-            self.items[index] = int(eval(self.operation) / 3)
+            # start = time.time()
+            self.items[index] = int(eval(self.operation))
 
             if self.items[index] % self.testDivisible:
                 monkeys[self.trueMonkey].items.append(self.items[index])
@@ -40,9 +42,10 @@ for monkeyIndex in range(int((len(allLines) + 1) / 7)):
     monkey = Monkey(ims, op, testDiv, tMonkey, fMonkey)
     monkeys.append(monkey)
 
-for round in range(1):
+for round in range(20):
     for monkey in monkeys:
         monkey.ExecuteRoundActions()
 
 for monkey in monkeys:
     print(monkey.items)
+    print(monkey.inspectedItems)
