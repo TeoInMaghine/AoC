@@ -27,11 +27,10 @@ for i, line in enumerate(allLines):
 
 print(games)
 
+# Calculate power
 result = 0
-configuration = [12, 13, 14]
 
-for j, game in enumerate(games):
-    is_possible = all([game[i] <= count for i, count in enumerate(configuration)])
-    result += is_possible * (j + 1)
+for r, g, b in games:
+    result += r * g * b
 
 print(result)
