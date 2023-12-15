@@ -5,7 +5,7 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 with open(os.path.join(__location__, 'input.txt')) as f:
     allLines = f.readlines()
 
-symbols = []
+potential_gears_positions = []
 
 number_index = 0
 numbers = []
@@ -30,27 +30,29 @@ for row, line in enumerate(allLines):
                 number_positions[(row, i)] = number_index
 
             number_index += 1
-            if char != ".":
-                symbols.append([char, (row, column)])
-        elif char != ".":
-            symbols.append([char, (row, column)])
-
-print(numbers)
-print(number_positions)
-print(symbols)
+            if char == "*":
+                potential_gears_positions.append((row, column))
+        elif char == "*":
+            potential_gears_positions.append((row, column))
 
 result = 0
 
-for symbol, spos in symbols:
+for spos in potential_gears_positions:
+    temp_result = 1
+    adjacent_nums_count = 0
+
     for row in range(spos[0]-1, spos[0]+2):
         for column in range(spos[1]-1, spos[1]+2):
             pos = (row, column)
-            # print(pos)
             if pos in number_positions:
                 index = number_positions[pos]
                 if numbers[index] != None:
-                    result += numbers[index]
+                    adjacent_nums_count += 1
+                    temp_result *= numbers[index]
                     print(numbers[index])
                     numbers[index] = None
+    
+    if adjacent_nums_count == 2:
+        result += temp_result
 
 print(result)
