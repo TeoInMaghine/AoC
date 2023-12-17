@@ -41,16 +41,16 @@ def get_hand_type(hand):
 value_table = "J23456789TJQKA"
 def get_value(hand):
     value = 0
-    base_13_digit_mult = 1
+    base_14_digit_mult = 1
 
     hand = hand[::-1]
     for card in hand:
-        value += base_13_digit_mult * value_table.find(card)
-        base_13_digit_mult *= 13
+        value += base_14_digit_mult * value_table.find(card)
+        base_14_digit_mult *= 14
 
     return value
 
-most_significant_digit_mult = pow(13, 5)
+most_significant_digit_mult = pow(14, 5)
 values_to_bid = {}
 
 for line in allLines:
@@ -67,6 +67,8 @@ for line in allLines:
 
     value = most_significant_digit_mult * type_value + hand_value
     values_to_bid[value] = bid
+
+    print(hand, value, bid)
 
 # Sort values to determine rank
 values_to_bid = dict(sorted(values_to_bid.items()))
