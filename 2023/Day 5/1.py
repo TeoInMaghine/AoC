@@ -18,7 +18,7 @@ for i, line in enumerate(allLines):
         for index, element in enumerate(unprocessed_seeds):
             if index % 2 == 0:
                 seed_ranges.append(int(element))
-                seed_ranges.append(int(element) + int(unprocessed_seeds[index + 1]) - 1)
+                seed_ranges.append(int(unprocessed_seeds[index + 1]))
         continue
     if i == 1: continue
 
@@ -33,46 +33,51 @@ for i, line in enumerate(allLines):
         destination_start, source_start, range_length = [int(e) for e in partial_map]
         maps[current_map_index].append((source_start, destination_start, range_length))
 
-# Increment location and mapping backwards 
-# until getting a valid seed, that's the lowest location
-def trace_back_to_seed(location):
-    for map in maps:
-        for partial_map in map:
-            source_start, destination_start, range_length = partial_map
-
-            # print(f"{destination_start} <= L: {location} < {destination_start + range_length} = {(destination_start <= location) and (location < destination_start + range_length)}")
-
-            # Should map from destination to source instead of source to destination
-            if (destination_start <= location) and (location < destination_start + range_length):
-                offset = destination_start - source_start
-                location -= offset
-
-                break
-                # print(f"Transf: {location}")
-    
-    # Now a seed
-    return location
-
+print(maps)
 print(seed_ranges)
 
-# Reverse every mapping's order
-maps.reverse()
-for i, map in enumerate(maps):
-    map.reverse()
-    maps[i] = map
+def is_in_range(x, start, length):
+    return start <= x and x < start + length
 
-print(maps)
+def process():
+    new_seed_ranges = []
 
-location = 0
-found_result = False
-while(not found_result):
-    seed = trace_back_to_seed(location)
-    for i, seed_start in enumerate(seed_ranges):
-        if i % 2 != 0: continue
+    for index, seed_start in enumerate(seed_ranges):
+        if index % 2 != 0: continue
 
-        seed_end = seed_ranges[i + 1]
-        if (seed_start <= seed) and (seed <= seed_end):
-            found_result = True
-            print(f"Result: {seed}")
+        seed_length = seed_ranges[index + 1]
 
-    location += 1
+        for map in maps:
+            for partial_map in map:
+                map_start, _, map_length = partial_map
+
+                map_start_in_range = is_in_range(map_start, seed_start, seed_length)
+                map_end_in_range = is_in_range(map_start + map_length - 1, seed_start, seed_length)
+
+                if map_start_in_range and map_end_in_range:
+                    if seed_start != map_start:
+                        new_seed_ranges.append(seed_start)
+                        first_length = map_start - seed_start
+                        new_seed_ranges.append(first_length)
+                    
+                    new_seed_ranges.append(map_start)
+                    new_seed_ranges.append(map_length)
+
+                    if map_start + map_length != seed_start + seed_length:
+                        last_start = map_start + map_length
+                        last_length = seed_start + seed_length - last_start
+                        new_seed_ranges.append(last_start)
+                        new_seed_ranges.append(last_length)
+                elif map_end_in_range:
+                    if map_start + map_length != seed_start + seed_length:
+
+                elif map_start_in_range:
+                    pass
+                else:
+                    new_seed_ranges.append(seed_start)
+                    new_seed_ranges.append(seed_length)
+
+
+    pass
+
+process()
