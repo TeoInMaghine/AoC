@@ -1,4 +1,5 @@
 import os
+import math
 
 allLines = []
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
@@ -14,6 +15,8 @@ nodes = {}
 starting_nodes = set()
 ending_nodes = set()
 
+adsfasdf = 0
+
 allLines = allLines[2:]
 for line in allLines:
     sline = line.strip()
@@ -25,7 +28,11 @@ for line in allLines:
     nodes[node] = neighbours
 
     if node.endswith("A"):
-        starting_nodes.add(node)
+        adsfasdf += 1
+        # I changed this line from 1 to 6 to get the numbers
+        # in end_nodes.txt
+        if(adsfasdf == 6):
+            starting_nodes.add(node)
     elif node.endswith("Z"):
         ending_nodes.add(node)
 
@@ -37,15 +44,17 @@ while not current_nodes_are_end:
     new_current_nodes = set()
     current_instruction = instructions[steps % instructions_count]
 
-    print("0")
     for node in starting_nodes:
         new_current_nodes.add(nodes[node][current_instruction])
 
     starting_nodes = new_current_nodes
     steps += 1
 
-    print("1")
     current_nodes_are_end = starting_nodes.issubset(ending_nodes)
-    print("2")
+    if current_nodes_are_end:
+        print(starting_nodes)
 
 print(steps)
+
+print("Result")
+print(math.lcm(12169, 20093, 20659, 22357, 13301, 18961))

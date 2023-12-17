@@ -1,0 +1,24 @@
+I realized there was an end node for each starting node, 
+and turns out just by getting the lowest common multiple
+of all the steps needed to reach the end node. I was 
+lucky that that was the case, but then I thought that it 
+would've been much more complicated to create the puzzle
+if this wasn't the case, so that's that.
+
+{'QXZ'}
+12169
+
+{'MTZ'}
+20093
+
+{'ZZZ'}
+20659
+
+{'NDZ'}
+22357
+
+{'GPZ'}
+13301
+
+{'VHZ'}
+18961
