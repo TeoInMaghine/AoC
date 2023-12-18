@@ -5,7 +5,7 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 with open(os.path.join(__location__, 'input.txt')) as f:
     allLines = f.readlines()
 
-histories = [[int(num) for num in line.strip().split()]for line in allLines]
+histories = [[int(num) for num in line.strip().split()[::-1]]for line in allLines]
 
 def get_diffs(sequence):
     all_zeroes = True
