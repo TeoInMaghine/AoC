@@ -5,45 +5,33 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 with open(os.path.join(__location__, 'input.txt')) as f:
     allLines = f.readlines()
 
-# First expand universe
-newAllLines = []
-for row in allLines:
-    newAllLines.append(row)
-    if '#' not in row.strip():
-        newAllLines.append('.' * len(row.strip()))
-allLines = list(newAllLines)
-
-def insert (source_str, insert_str, pos):
-    return source_str[:pos] + insert_str + source_str[pos:]
-
-offset = 0
-for c in range(len(allLines[0].strip())):
-    column_has_galaxies = False
+def column_has_no_galaxies(c):
+    has_no_galaxies = True
     for row in allLines:
         char = row[c]
         if char == '#':
-            column_has_galaxies = True
+            has_no_galaxies = False
     
-    if not column_has_galaxies:
-        for r, row in enumerate(newAllLines):
-            newAllLines[r] = insert(row, '.', c + offset)
+    return has_no_galaxies
 
-        offset += 1
-
-allLines = newAllLines
-
-
-
-
-
-# Then parse galaxies
+EXPANSION_CONST = 1_000_000 - 1
 galaxies = []
-for r, row in enumerate(allLines):
-    for c, char in enumerate(row.strip()):
-        if char == '#':
-            galaxies.append((r, c))
-            
 
+row_expansion = 0
+
+for r, row in enumerate(allLines):
+    column_expansion = 0
+    for c, char in enumerate(row.strip()):
+        if column_has_no_galaxies(c):
+            print(f"column expansion: {c}")
+            column_expansion += EXPANSION_CONST
+
+        if char == '#':
+            galaxies.append((r + row_expansion, c + column_expansion))
+
+    if '#' not in row.strip():
+        print("row expansion")
+        row_expansion += EXPANSION_CONST
 print(galaxies)
 
 def get_manhattan_distance(pos_1, pos_2):
