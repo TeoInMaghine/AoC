@@ -43,14 +43,43 @@ def get_pipe_neighbours(r, c):
 for r, row in enumerate(grid):
     for c, obj in enumerate(row):
         if obj == 'S':
-            start_pos = r, c
+            s_pos = r, c
 
-pipe_neighbours = get_pipe_neighbours(*start_pos)
+both_current_pos_dir = []
+pipe_neighbours = get_pipe_neighbours(*s_pos)
 for r, c, pipe in pipe_neighbours:
     pipe_dirs = pipes_dirs[pipe]
 
-    for dir in pipe_dirs:
+    for index, dir in enumerate(pipe_dirs):
         goal_r = r - dir[0]
         goal_c = c + dir[1]
-        if goal_r == start_pos[0] and goal_c == start_pos[1]:
-            print("e")
+        if goal_r == s_pos[0] and goal_c == s_pos[1]:
+            non_matching_dir_index = 1 - index
+            both_current_pos_dir.append((r, c, pipe_dirs[non_matching_dir_index]))
+
+
+print(both_current_pos_dir)
+#print(grid[both_current_pos_dir[0][0]][both_current_pos_dir[0][1]])
+#print(grid[both_current_pos_dir[1][0]][both_current_pos_dir[1][1]])
+
+distance = 1
+while not (both_current_pos_dir[0][0] == both_current_pos_dir[1][0] and both_current_pos_dir[0][1] == both_current_pos_dir[1][1]):
+    new_both_current_pos_dir = []
+    for r, c, dir in both_current_pos_dir:
+        next_r = r - dir[0]
+        next_c = c + dir[1]
+        next_pipe = grid[next_r][next_c]
+
+        pipe_dirs = pipes_dirs[next_pipe]
+        for index, dir in enumerate(pipe_dirs):
+            goal_r = next_r - dir[0]
+            goal_c = next_c + dir[1]
+            
+            if goal_r == r and goal_c == c:
+                non_matching_dir_index = 1 - index
+                new_both_current_pos_dir.append((next_r, next_c, pipe_dirs[non_matching_dir_index]))
+    both_current_pos_dir = new_both_current_pos_dir
+
+    distance += 1
+
+print(distance)
