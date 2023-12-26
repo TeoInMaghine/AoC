@@ -11,18 +11,9 @@ forward_slash = {(0, 1): (-1, 0), (1, 0): (0, -1), (-1, 0): (0, 1), (0, -1): (1,
 backward_slash = {(0, 1): (1, 0), (1, 0): (0, 1), (-1, 0): (0, -1), (0, -1): (-1, 0)}
 
 grid = [[char for char in line.strip()] for line in allLines]
-energized = [[False for char in line.strip()] for line in allLines]
 
 ROWS_COUNT = len(grid)
 COLS_COUNT = len(grid[0])
-
-# First beams starts in top-left corner, going to the right 
-# (I make it start outside of the grid actually, so that it works even if in 
-# the first one there's a mirror or something like that)
-
-# pos_y, pos_x, dir_y, dir_x
-beams = [(0, -1, 0, 1)]
-memo = set()
 
 def out_of_bounds(y, x):
     return y < 0 or y >= COLS_COUNT or x < 0 or x >= ROWS_COUNT
@@ -68,20 +59,45 @@ def iteration():
     
     beams = new_beams
 
-while len(beams) > 0:
-    iteration()
-    print(beams)
-    
+def get_energized():
+    global memo
+    memo = set()
 
-    for pos_y, pos_x, dir_y, dir_x in beams:
-        energized[pos_y][pos_x] = True
+    energized = [[False for char in line.strip()] for line in allLines]
+
+    while len(beams) > 0:
+        iteration()
+
+        for pos_y, pos_x, dir_y, dir_x in beams:
+            energized[pos_y][pos_x] = True
+
+    result = 0
+    for row in energized:
+        string = ""
+        for is_energized in row:
+            result += is_energized
+            string += '#' if is_energized else '.'
+        # print(string)
+
+    return result
 
 result = 0
-for row in energized:
-    string = ""
-    for is_energized in row:
-        result += is_energized
-        string += '#' if is_energized else '.'
-    print(string)
+for i in range(COLS_COUNT):
+    # Top row
+    beams = [(-1, i, 1, 0)]
+    result = max(get_energized(), result)
+
+    # Bottom row
+    beams = [(ROWS_COUNT, i, -1, 0)]
+    result = max(get_energized(), result)
+
+for i in range(ROWS_COUNT):
+    # Leftmost column
+    beams = [(i, -1, 0, 1)]
+    result = max(get_energized(), result)
+
+    # Rightmost column
+    beams = [(i, COLS_COUNT, 0, -1)]
+    result = max(get_energized(), result)
 
 print(result)
