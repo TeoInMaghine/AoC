@@ -5,7 +5,7 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 with open(os.path.join(__location__, 'input.txt')) as f:
     allLines = f.readlines()
 
-dirs = {'R': (1, 0), 'L': (-1, 0), 'U': (0, -1), 'D': (0, 1),}
+dirs = {'R': (1, 0), 'L': (-1, 0), 'U': (0, -1), 'D': (0, 1)}
 
 # Parse data
 moves = []
@@ -34,20 +34,26 @@ for y in range(max_y + 1):
         if (x, y) in holes:
             i = holes.index((x, y))
             grid[y].append(i)
-        else: grid[y].append(-1)
+        else:
+            grid[y].append(-1)
+
 
 def get_vertical_neighbour_dir(i):
     local_dirs = []
 
     x, y = holes[i]
-    if (y+1 <= max_y) and (grid[y+1][x] == (i+1) % len(holes) or grid[y+1][x] == (i-1) % len(holes)):
+    if (y+1 <= max_y) and (grid[y+1][x] == (i+1) % len(holes) or
+                           grid[y+1][x] == (i-1) % len(holes)):
         local_dirs.append(dirs['D'])
-    if (y-1 >= 0) and (grid[y-1][x] == (i+1) % len(holes) or grid[y-1][x] == (i-1) % len(holes)):
+    if (y-1 >= 0) and (grid[y-1][x] == (i+1) % len(holes) or
+                       grid[y-1][x] == (i-1) % len(holes)):
         local_dirs.append(dirs['U'])
-    
+
     return local_dirs
 
+
 new_holes = holes.copy()
+
 for y, row in enumerate(grid):
     entry_dir = None
     walls = 0
@@ -63,10 +69,10 @@ for y, row in enumerate(grid):
         if len(hole_vert_dirs) == 2:
             walls += 1
         elif len(hole_vert_dirs) == 1:
-            if entry_dir == None:
+            if entry_dir is None:
                 entry_dir = hole_vert_dirs[0]
             elif entry_dir != hole_vert_dirs[0]:
-                walls += 1 
+                walls += 1
 holes = new_holes
 
 
