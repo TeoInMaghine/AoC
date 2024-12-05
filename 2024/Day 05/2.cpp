@@ -19,7 +19,6 @@ int main() {
         relations[a].insert(b);
     }
 
-    int corrects = 0;
     int total = 0;
 
     string tmp;
@@ -32,8 +31,10 @@ int main() {
         while(ss >> num)
             nums.push_back(num);
 
-        if (is_sorted(nums.begin(), nums.end(), comp))
+        if (!is_sorted(nums.begin(), nums.end(), comp)) {
+            sort(nums.begin(), nums.end(), comp);
             total += nums[nums.size() / 2];
+        }
     }
 
     cout << total << endl;
