@@ -5,6 +5,7 @@ const int N = 130;
 
 bool visited[4][N][N];
 bool obstacles[N][N];
+bool total_placed_obstacles[N][N];
 
 // Cardinal directions: i1,j1, i2,j2, ...
 int dirs[4*2] = {-1,0, 0,1, 1,0, 0,-1};
@@ -15,27 +16,27 @@ int rotated_90(int dir_i) {
 }
 
 bool try_cicle(int x, int y, int dir_i) {
+    int debugx = x, debugy = y;
     // Reset visited
     fill_n(&visited[0][0][0], 4 * N * N, false);
 
-    // Add the obstacle if it wouldn't be outside bounds and doesn't exist already
+    // Add the obstacle if it wouldn't be outside bounds and doesn't exist already, and hasn't been tried
     int obstacle_y = y + dirs[dir_i];
     int obstacle_x = x + dirs[dir_i + 1];
-    if (obstacle_x >= N || obstacle_x < 0 || obstacle_y >= N || obstacle_y < 0 || obstacles[obstacle_y][obstacle_x])
+    if (obstacle_x >= N || obstacle_x < 0 || obstacle_y >= N || obstacle_y < 0 || obstacles[obstacle_y][obstacle_x] || total_placed_obstacles[obstacle_y][obstacle_x])
         return false;
     obstacles[obstacle_y][obstacle_x] = true;
+    total_placed_obstacles[obstacle_y][obstacle_x] = true;
 
     visited[dir_i/2][y][x] = true;
 
     // Turn
     dir_i = rotated_90(dir_i);
 
-    // cout << x << "," << y << " dir: " << dir_i << endl;
     while (true) {
         if (visited[dir_i/2][y][x]) {
             // Restore obstacles before returning
             obstacles[obstacle_y][obstacle_x] = false;
-            // cout << "Yup" << endl;
             return true;
         }
 
