@@ -5,7 +5,7 @@ using namespace std;
 ll result;
 vector<ll> nums;
 
-int solve() {
+ll solve() {
     for (int i = 0; i < pow(2,nums.size()-1); i++) {
         ll res = nums[0];
         bitset<32> permutation(i);
@@ -16,8 +16,6 @@ int solve() {
                 res *= nums[j+1];
             }
         }
-
-        cout << res << endl;
 
         if (res == result) {
             return result;
@@ -30,7 +28,7 @@ int solve() {
 int main() {
     char c;
     ll x = 0;
-    ll answer = 0;
+    uint64_t answer = 0;
     while (scanf("%c", &c) != EOF) {
         if (isdigit(c)) {
             x = x * 10 + (c - '0');
@@ -42,9 +40,7 @@ int main() {
                 nums.push_back(x);
             } else {
                 nums.push_back(x);
-
                 answer += solve();
-
                 nums.clear();
             }
 
