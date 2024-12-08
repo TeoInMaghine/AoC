@@ -1,27 +1,25 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define ll long long
+#define ll unsigned long long
 
 ll result;
-deque<ll> nums;
+vector<ll> nums;
 
 int solve() {
-    ll x = nums.front();
-    nums.pop_front();
-    
-    for (int i = 0; i < pow(2,nums.size()); i++) {
-        ll res = x;
+    for (int i = 0; i < pow(2,nums.size()-1); i++) {
+        ll res = nums[0];
         bitset<32> permutation(i);
-        for (int j = 0; j < nums.size(); j++) {
+        for (int j = 0; j < nums.size()-1; j++) {
             if (permutation.test(j)) {
-                res += nums[j];
+                res += nums[j+1];
             } else {
-                res *= nums[j];
+                res *= nums[j+1];
             }
         }
 
+        cout << res << endl;
+
         if (res == result) {
-            cout << result << endl;
             return result;
         }
     }
