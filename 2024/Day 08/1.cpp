@@ -4,14 +4,12 @@ using namespace std;
 vector<string> grid;
 multimap<char, pair<int,int>> antennas;
 
-constexpr bool is_in_grid(int i, int j) {
+inline bool is_in_grid(int i, int j) {
     return i >= 0 && i < grid.size() && j >= 0 && j < grid[0].size();
 }
 
 int main() {
-
     string s;
-
     int i = 0;
     while (getline(cin, s)) {
         grid.push_back(s);
@@ -32,7 +30,7 @@ int main() {
             int jt_i = jt->second.first;
             int jt_j = jt->second.second;
 
-            // Deltas desde it hasta jt
+            // deltas from it to jt
             int di = jt_i - it_i;
             int dj = jt_j - it_j;
 
@@ -47,11 +45,8 @@ int main() {
         ++it;
     }
 
-
     int answer = 0;
-
     for (auto& s : grid)
         answer += count(s.begin(), s.end(), '#');
-
     cout << answer << endl;
 }
