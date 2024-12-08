@@ -8,9 +8,8 @@ vector<ll> nums;
 ll solve() {
     for (int i = 0; i < pow(2,nums.size()-1); i++) {
         ll res = nums[0];
-        bitset<32> permutation(i);
         for (int j = 0; j < nums.size()-1; j++) {
-            if (permutation.test(j)) {
+            if (i & (1 << j)) {
                 res += nums[j+1];
             } else {
                 res *= nums[j+1];
