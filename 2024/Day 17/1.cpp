@@ -1,7 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int A, B, C;
+long unsigned A;
+int B, C;
 // inst, operand
 vector<pair<int,int>> program;
 
@@ -10,7 +11,7 @@ int main() {
     char c[13];
     // "Register A: "
     scanf("%12c", c);
-    scanf("%d", &A);
+    scanf("%lu", &A);
 
     // "\nRegister B: "
     scanf("%13c", c);
