@@ -7,8 +7,6 @@ struct Node {
 };
 
 const int N = 71;
-
-bool is_wall[N][N];
 Node grid[N][N];
 
 pair<int,int> dirs[4] = { {-1, 0}, {0, 1}, {1, 0}, {0, -1} };
@@ -19,16 +17,14 @@ bool comp(const pair<int,int>& a, const pair<int,int>& b) {
     return grid[ai][aj].g > grid[bi][bj].g;
 }
 
-void pathfinding() {
-    grid[0][0].g = 0;
-    grid[0][0].visited = true;
-    priority_queue<pair<int,int>, vector<pair<int,int>>, decltype(&comp)> unvisited(&comp);
-    unvisited.push({ 0, 0 });
+priority_queue<pair<int,int>, vector<pair<int,int>>, decltype(&comp)> unvisited(&comp);
+
+bool pathfinding() {
 
     while (!unvisited.empty()) {
         const auto [i, j] = unvisited.top(); unvisited.pop();
 
-        if (i == N-1 && j == N-1) break; // reached end
+        if (i == N-1 && j == N-1) return true; // reached end
 
         Node* curr = &grid[i][j];
         curr->visited = true;
@@ -47,47 +43,57 @@ void pathfinding() {
             }
         }
     }
-}
 
-void reset_grid() {
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < N; j++) {
-            grid[i][j] = {INT_MAX, is_wall[i][j]};
-        }
-    }
+    return false;
 }
 
 int main() {
     const Node def = {INT_MAX, false};
     fill_n(&grid[0][0], N * N, def);
-    fill_n(&is_wall[0][0], N * N, false);
 
-    char c;
-    int i,j;
-    for (int b = 0; b < 1024; b++) {
+    pair<int,int> bytes[3450];
+    for (int b = 0; b < 3450; b++) {
+        char c;
+        int i,j;
         scanf("%d", &j);
         scanf("%c", &c);
         scanf("%d", &i);
         scanf("%c", &c);
 
-        is_wall[i][j] = true;
+        bytes[b] = {i, j};
         grid[i][j].visited = true;
     }
 
-    for (int b = 1024; b < 3450; b++) {
-        pathfinding();
+    grid[0][0].g = 0;
+    grid[0][0].visited = true;
+    unvisited.push({ 0, 0 });
+    pathfinding();
 
-        if (grid[N-1][N-1].g == INT_MAX) {
-            cout << j << "," << i << '\n';
-            break;
+    // go through obstacle positions in reverse order,
+    // removing them instead of adding them, and only try
+    // pathfinding when the obstacle could've been blocking
+    // a path
+    int i, j;
+    for (int b = 3450; b >= 0; b--) {
+        i = bytes[b].first;
+        j = bytes[b].second;
+        grid[i][j].visited = false;
+
+        // see if any neighbour has been part of the search,
+        // if so than this position could be in the path to the end
+        for (const auto [di, dj] : dirs) {
+            const int ni = i + di, nj = j + dj;
+            if (ni < 0 || ni >= N || nj < 0 || nj >= N) continue;
+
+            Node* next = &grid[ni][nj];
+            if (next->g != INT_MAX) {
+                grid[i][j].g = 0;
+                unvisited.push({ i, j });
+                if (pathfinding()) goto end;
+                break;
+            }
         }
-
-        scanf("%d", &j);
-        scanf("%c", &c);
-        scanf("%d", &i);
-        scanf("%c", &c);
-
-        is_wall[i][j] = true;
-        reset_grid();
     }
+    end:
+    cout << j << "," << i << '\n';
 }
