@@ -6,9 +6,9 @@ struct Node {
     bool visited;
 };
 
-const Node def = {INT_MAX, false};
 const int N = 71;
 
+bool is_wall[N][N];
 Node grid[N][N];
 
 pair<int,int> dirs[4] = { {-1, 0}, {0, 1}, {1, 0}, {0, -1} };
@@ -19,27 +19,7 @@ bool comp(const pair<int,int>& a, const pair<int,int>& b) {
     return grid[ai][aj].g > grid[bi][bj].g;
 }
 
-int main() {
-    fill_n(&grid[0][0], N * N, def);
-
-    for (int b = 0; b < 1024; b++) {
-        char c;
-        int i,j;
-        scanf("%d", &j);
-        scanf("%c", &c);
-        scanf("%d", &i);
-        scanf("%c", &c);
-
-        grid[i][j].visited = true;
-    }
-
-    // for (int i = 0; i < N; i++) {
-    //     for (int j = 0; j < N; j++) {
-    //         cout << (grid[i][j].visited ? '#' : '.');
-    //     }
-    //     cout << '\n';
-    // }
-
+void pathfinding() {
     grid[0][0].g = 0;
     grid[0][0].visited = true;
     priority_queue<pair<int,int>, vector<pair<int,int>>, decltype(&comp)> unvisited(&comp);
@@ -67,6 +47,47 @@ int main() {
             }
         }
     }
+}
 
-    cout << grid[N-1][N-1].g << '\n';
+void reset_grid() {
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            grid[i][j] = {INT_MAX, is_wall[i][j]};
+        }
+    }
+}
+
+int main() {
+    const Node def = {INT_MAX, false};
+    fill_n(&grid[0][0], N * N, def);
+    fill_n(&is_wall[0][0], N * N, false);
+
+    char c;
+    int i,j;
+    for (int b = 0; b < 1024; b++) {
+        scanf("%d", &j);
+        scanf("%c", &c);
+        scanf("%d", &i);
+        scanf("%c", &c);
+
+        is_wall[i][j] = true;
+        grid[i][j].visited = true;
+    }
+
+    for (int b = 1024; b < 3450; b++) {
+        pathfinding();
+
+        if (grid[N-1][N-1].g == INT_MAX) {
+            cout << j << "," << i << '\n';
+            break;
+        }
+
+        scanf("%d", &j);
+        scanf("%c", &c);
+        scanf("%d", &i);
+        scanf("%c", &c);
+
+        is_wall[i][j] = true;
+        reset_grid();
+    }
 }
