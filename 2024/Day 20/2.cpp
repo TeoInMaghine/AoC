@@ -7,32 +7,9 @@ struct Node {
     pair<int,int> prev;
 };
 
+const int L = 9465;
 const int N = 141;
 const pair<int,int> dirs[4] = { {-1,0}, {0,1}, {1,0}, {0,-1} };
-constexpr auto cheat_offsets = [] {
-    array<pair<int,int>, 841> result;
-
-    int c = 0;
-    // "upper piramid", starting from the top
-    for (int i = -20; i <= 0; i++) {
-        // 0 to 0, -1 to 1, ... -20 to 20
-        for (int j = -20 - i; j <= 20 + i; j++) {
-            result[c] = {i,j};
-            c++;
-        }
-    }
-
-    // "lower inverted piramid", starting from the bottom, w/o middle row
-    for (int i = 20; i >= 1; i--) {
-        // 0 to 0, -1 to 1, ... -19 to 19
-        for (int j = -20 + i; j <= 20 - i; j++) {
-            result[c] = {i,j};
-            c++;
-        }
-    }
-
-    return result;
-}();
 
 Node grid[N][N];
 
@@ -45,7 +22,7 @@ bool comp(const pair<int,int>& a, const pair<int,int>& b) {
 priority_queue<pair<int,int>, vector<pair<int,int>>, decltype(&comp)> unvisited(comp);
 
 pair<int,int> start, finish;
-set<pair<int,int>> path;
+pair<int,int> path[L];
 // seconds saved: # of cheats
 map<int,int> cheat_saves;
 
@@ -95,31 +72,22 @@ int main() {
         }
     }
 
+    int i = L-1;
     pair<int,int> curr = finish;
     do {
-        path.insert(curr);
+        path[i] = curr;
         curr = grid[curr.first][curr.second].prev;
+        i--;
     } while (curr.first != -1 && curr.second != -1);
 
-    for (const auto& [i,j] : path) {
-        const int curr = grid[i][j].g;
-
-        for (const auto& [di,dj] : cheat_offsets) {
-            const int ni = i + di, nj = j + dj;
-
-            if (path.contains({ni,nj})) {
-                const int& next = grid[ni][nj].g;
-                int seconds_saved = next - curr - abs(di) - abs(dj);
-
-                if (seconds_saved > 0)
-                    cheat_saves[seconds_saved]++;
-            }
-        }
-    }
-
     int answer = 0;
-    for (auto it = cheat_saves.lower_bound(100); it != cheat_saves.end(); ++it) {
-        answer += it->second;
+    for (i = 0; i < L; i++) {
+        const auto& [ci,cj] = path[i];
+        for (int j = i+100; j < L; j++) {
+            const auto& [ni,nj] = path[j];
+            int dst = abs(ci - ni) + abs(cj - nj);
+            answer += dst <= 20 && j - i >= dst + 99;
+        }
     }
 
     cout << answer << '\n';
