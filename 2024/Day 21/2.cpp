@@ -88,7 +88,7 @@ void add_next_goals(bool moving_numeral) {
 
 int main() {
     string line;
-    int answer = 0;
+    long answer = 0;
     while (getline(cin, line)) {
         goals.clear();
         next_goals.clear();
@@ -99,19 +99,17 @@ int main() {
 
         add_next_goals(true);
 
-        curr = DIR_A_POS;
-        goals = next_goals;
-        next_goals.clear();
+        for (int c = 0; c < 25; c++) {
+            cout << c << '\n';
+            curr = DIR_A_POS;
+            goals = next_goals;
+            next_goals.clear();
 
-        add_next_goals(false);
-
-        curr = DIR_A_POS;
-        goals = next_goals;
-        next_goals.clear();
-
-        add_next_goals(false);
+            add_next_goals(false);
+        }
 
         answer += next_goals.size() * stoi(line.substr(0, 3));
+        cout << answer << '\n';
     }
 
     cout << answer << '\n';
