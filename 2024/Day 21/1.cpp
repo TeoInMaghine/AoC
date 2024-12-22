@@ -99,17 +99,13 @@ int main() {
 
         add_next_goals(true);
 
-        curr = DIR_A_POS;
-        goals = next_goals;
-        next_goals.clear();
+        for (int c = 0; c < 2; c++) {
+            curr = DIR_A_POS;
+            goals = next_goals;
+            next_goals.clear();
 
-        add_next_goals(false);
-
-        curr = DIR_A_POS;
-        goals = next_goals;
-        next_goals.clear();
-
-        add_next_goals(false);
+            add_next_goals(false);
+        }
 
         answer += next_goals.size() * stoi(line.substr(0, 3));
     }
