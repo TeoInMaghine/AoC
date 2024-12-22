@@ -5,12 +5,12 @@ const int PRUNE = 16777216;
 
 int main() {
     // change sequence: sum of the prices for that sequence for all monkeys
-    map<tuple<int,int,int,int>,int> sum_prices;
+    int sum_prices[19][19][19][19] = {0};
 
     string line;
     while (getline(cin, line)) {
         // wether the change-sequence was already found for this monkey
-        set<tuple<int,int,int,int>> found;
+        bool found[19][19][19][19] = {false};
         int changes[4];
 
         long secret = stoi(line);
@@ -25,10 +25,13 @@ int main() {
             changes[i % 4] = price - prev_price;
 
             if (i >= 3) {
-                tuple<int,int,int,int> change_sequence = { changes[i % 4], changes[(i+1) % 4], changes[(i+2) % 4], changes[(i+3) % 4] };
-                if (!found.contains(change_sequence)) {
-                    found.insert(change_sequence);
-                    sum_prices[change_sequence] += price;
+                const int i1 = changes[i % 4] + 9;
+                const int i2 = changes[(i+1) % 4] + 9;
+                const int i3 = changes[(i+2) % 4] + 9;
+                const int i4 = changes[(i+3) % 4] + 9;
+                if (!found[i1][i2][i3][i4]) {
+                    found[i1][i2][i3][i4] = true;
+                    sum_prices[i1][i2][i3][i4] += price;
                 }
             }
 
@@ -37,8 +40,11 @@ int main() {
     }
 
     int answer = 0;
-    for (const auto& [change_sequence,sum_price] : sum_prices) {
-        answer = max(answer, sum_price);
-    }
+    for (int i = 0; i < 19; i++)
+        for (int j = 0; j < 19; j++)
+            for (int k = 0; k < 19; k++)
+                for (int w = 0; w < 19; w++)
+                    answer = max(answer, sum_prices[i][j][k][w]);
+
     cout << answer << '\n';
 }
