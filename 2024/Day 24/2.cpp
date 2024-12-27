@@ -5,6 +5,7 @@ enum Op { AND, OR, XOR };
 
 // id: value, subscribers (ids of the operations)
 map<string, pair<bool,vector<int>>> wires;
+deque<string> original_wires;
 
 struct Gate {
     Op op;
@@ -33,40 +34,9 @@ struct Gate {
     }
 };
 vector<Gate> gates;
-
 deque<string> unprocessed;
 
-int main() {
-    deque<string> original_wires;
-    string s;
-    while (getline(cin, s)) {
-        if (s.size() == 0) break;
-
-        string wire = s.substr(0,3);
-        wires[wire].first = s[5] == '1';
-        unprocessed.push_back(wire);
-        original_wires.push_back(wire);
-    }
-
-    int id = 0;
-    while (getline(cin, s)) {
-        int second_space_i = s.find(' ', 4);
-
-        Gate gate;
-        gate.op = s[4] == 'A' ? AND : s[4] == 'O' ? OR : XOR;
-        gate.operand1 = s.substr(0,3);
-        gate.operand2 = s.substr(second_space_i+1,3);
-        gate.result = s.substr(second_space_i+8,3);
-        gate.calculated1 = false;
-        gate.calculated2 = false;
-        gate.calculated = false;
-        gates.push_back(gate);
-
-        wires[gate.operand1].second.push_back(id);
-        wires[gate.operand2].second.push_back(id);
-        id++;
-    }
-
+void print_incorrect_sums() {
     wires["x00"].first = true;
     for (int i = 0; i < 44; i++) {
         wires["y00"].first = true;
@@ -96,6 +66,7 @@ int main() {
                 }
             }
 
+            // calculate answer
             long answer = 0;
             long bit_mult = 1;
             for (auto it = wires.lower_bound("z00"); it != wires.end(); ++it) {
@@ -106,7 +77,8 @@ int main() {
                 bit_mult <<= 1;
             }
 
-            long long expected = ((long)1<<i) + ((long)1<<j);
+            // identify if the answer is wrong
+            long expected = ((long)1<<i) + ((long)1<<j);
             if (answer != expected) {
                 cout << answer << ", expected: " << expected << '\n';
                 cout << i << ' ' << j << '\n';
@@ -119,7 +91,38 @@ int main() {
 
         wires[format("x{:02}", i)].first = false;
         wires[format("x{:02}", i+1)].first = true;
-
-        cout << "(remember that I already switched a few gates)" << '\n';
     }
+}
+
+int main() {
+    string s;
+    while (getline(cin, s)) {
+        if (s.size() == 0) break;
+
+        string wire = s.substr(0,3);
+        wires[wire].first = s[5] == '1';
+        unprocessed.push_back(wire);
+        original_wires.push_back(wire);
+    }
+
+    int id = 0;
+    while (getline(cin, s)) {
+        int second_space_i = s.find(' ', 4);
+
+        Gate gate;
+        gate.op = s[4] == 'A' ? AND : s[4] == 'O' ? OR : XOR;
+        gate.operand1 = s.substr(0,3);
+        gate.operand2 = s.substr(second_space_i+1,3);
+        gate.result = s.substr(second_space_i+8,3);
+        gate.calculated1 = false;
+        gate.calculated2 = false;
+        gate.calculated = false;
+        gates.push_back(gate);
+
+        wires[gate.operand1].second.push_back(id);
+        wires[gate.operand2].second.push_back(id);
+        id++;
+    }
+
+    print_incorrect_sums();
 }
