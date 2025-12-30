@@ -1,32 +1,36 @@
 //
-// this can be solved similarly to part 1, but iterating through the amount of
-// digits that get repeated.  since we already solved part 1 in a really
-// efficient way, we can afford doing that (and there aren't that many digits
-// anyway).
+// > this can be solved similarly to part 1, but iterating through the amount of
+// > digits that get repeated.  since we already solved part 1 in a really
+// > efficient way, we can afford doing that (and there aren't that many digits
+// > anyway).
 //
-// instead of thinking of halfs of the numbers, we can think of for example 1
-// digit repeating, or 2 digits repeating, and so on (as long as it divides the
-// total amount of digits cleanly).  for example:
-//      number = 54764 => digits = 5
+// > instead of thinking of halfs of the numbers, we can think of for example 1
+// > digit repeating, or 2 digits repeating, and so on (as long as it divides the
+// > total amount of digits cleanly).  for example:
+// >      number = 54764 => digits = 5
 //
-//  1 digit repeating : digits (5) % 1 == 0 and digits / 1 == 5 >= 2 => ok
-//  2 digits repeating: digits % 2 == 1  => not ok, has to be 0
-//  ...
-//  5 digits repeating: digits % 5 == 0 and digits / 5 == 1 => not ok, has to be >= 2
+// >  1 digit repeating : digits (5) % 1 == 0 and digits / 1 == 5 >= 2 => ok
+// >  2 digits repeating: digits % 2 == 1  => not ok, has to be 0
+// >  ...
+// >  5 digits repeating: digits % 5 == 0 and digits / 5 == 1 => not ok, has to be >= 2
 //
-//  ( actually, I just realized that digits / repeating_digits will always be
-//  greater or equal to 2 if we iterate through amounts of digits from 1 to
-//  digits/2, so the second check isn't necessary )
+// >  ( actually, I just realized that digits / repeating_digits will always be
+// >  greater or equal to 2 if we iterate through amounts of digits from 1 to
+// >  digits/2, so the second check isn't necessary )
 //
-//  if ok, we can parse the numbers (in this case only each individual digit):
-//  number => {5, 4, 7, 6, 4}
+// >  if ok, we can parse the numbers (in this case only each individual digit):
+// >  number => {5, 4, 7, 6, 4}
 //
-//    > the clamp checking would have to happen for each digit in this case, so
-//    > start = 5, if 4 > start => start += 1, otherwise if 7 > start => start += 1,
-//    > and so on (in this case 7 > 5, so start = 5 + 1 = 6).
+// >    > the clamp checking would have to happen for each digit in this case, so
+// >    > start = 5, if 4 > start => start += 1, otherwise if 7 > start => start += 1,
+// >    > and so on (in this case 7 > 5, so start = 5 + 1 = 6).
 //
-// (maybe it'd be cheaper/easier to actually check if start/end invalid ID is
-// inside the range and add/subtract one if it isn't?) => I ended up doing this
+// > (maybe it'd be cheaper/easier to actually check if start/end invalid ID is
+// > inside the range and add/subtract one if it isn't?) => I ended up doing this
+//
+//
+// a lot of this thought process is actually outdated, for example I do check
+// if digits / repeating_digits >= 2.
 //
 //
 
@@ -45,8 +49,7 @@ pow10_i :: proc(x: int) -> int {
 
 // creates an invalid id from the number to repeat, how many digits that number
 // has, and how many times that number should be repeated
-get_invalid_id :: proc(num_to_repeat, digits, count: int) -> int {
-    invalid_id := 0
+get_invalid_id :: proc(num_to_repeat, digits, count: int) -> (invalid_id: int) {
     multiplier := pow10_i(digits)
     for _ in 0..<count {
         invalid_id *= multiplier
@@ -108,6 +111,8 @@ main :: proc() {
             }
             for digits in possible_digits {
 
+                if digits / repeating_digits < 2 do continue
+
                 // fmt.printfln("digits: %v - repeating digits: %v", digits, repeating_digits)
 
                 start := get_limit(first_id, repeating_digits, true) if
@@ -126,7 +131,7 @@ main :: proc() {
                     if found_invalid_id in found_invalid_ids do continue
                     found_invalid_ids[found_invalid_id] = true
 
-                    // fmt.println(found_invalid_id)
+                    // fmt.println(s, found_invalid_id)
                     invalid_ids += found_invalid_id
                     assert(invalid_ids >= 0) // detect overflow
                 }
