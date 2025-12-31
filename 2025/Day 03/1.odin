@@ -10,15 +10,12 @@
 
 package day_03
 
+import "../common"
 import "core:fmt"
-import "core:os"
 import "core:strings"
 
 main :: proc() {
-    raw_data, _ := os.read_entire_file_from_filename("input.txt")
-    data := string(raw_data)
-    newline := "\r\n" when ODIN_OS == .Windows else "\n"
-    data = strings.trim_suffix(data, newline)
+    data := common.get_input_file_contents()
 
     total_output_joltage := 0
 
