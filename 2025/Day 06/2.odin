@@ -3,7 +3,6 @@ package day_06
 import "../common"
 import "core:fmt"
 import "core:strings"
-import "core:unicode/utf8"
 import "core:slice"
 import "core:math"
 
@@ -24,8 +23,11 @@ main :: proc() {
     col_builder := builder_make(0, rows)
     for col_i in 0..<cols {
         for row_i in 0..<rows {
-            rune := utf8.rune_at_pos(data, line_length*row_i + col_i)
-            if rune != ' ' do write_rune(&col_builder, rune)
+            // I know this is ASCII, so instead of using utf8.rune_at_pos,
+            // (which basically performs a linear search because utf8 strings
+            // have variable length characters), I simply access by bytes
+            byte := data[line_length*row_i + col_i]
+            if byte != ' ' do write_byte(&col_builder, byte)
         }
         if builder_len(col_builder) != 0 {
             append(&numbers, common.parse_int(to_string(col_builder)))
