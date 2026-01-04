@@ -31,7 +31,7 @@ main :: proc() {
             case 'S':
                 // the first row only has the starting beam, so we process it
                 // and skip the rest
-                beams[col] = 1; continue
+                beams[col] = 1; break
             case '^':
                 /*
 
